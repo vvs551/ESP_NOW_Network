@@ -15,9 +15,13 @@ Include the library in your sketch and use the provided classes to set up an ESP
 
 ESP_NOW_Network_Node *node;
 
+void recv(const uint8_t *addr, const uint8_t *data, int len){
+  // Your code here
+}
+
 void setup() {
   Serial.begin(115200);
-  node = new ESP_NOW_Network_Node(EPCLIENT);
+  node = new ESP_NOW_Network_Node(EPSERVER);  // Chand to EPCLIENT on clients
   node->onNewRecv(recv, NULL);
 }
 
