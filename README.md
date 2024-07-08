@@ -21,7 +21,7 @@ void recv(const uint8_t *addr, const uint8_t *data, int len){
 
 void setup() {
   Serial.begin(115200);
-  node = new ESP_NOW_Network_Node(EPSERVER);  // Chand to EPCLIENT on clients
+  node = new ESP_NOW_Network_Node(EPSERVER);  // Change to EPCLIENT on clients
   node->onNewRecv(recv, NULL);
 }
 
