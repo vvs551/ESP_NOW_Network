@@ -1,0 +1,19 @@
+{
+  "name": "ESP_NOW_Network",
+  "version": "1.0.0",
+  "description": "ESP-NOW network library for ESP32",
+  "keywords": ["esp-now", "esp32", "communication"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vvs551/ESP_NOW_Network.git"
+  },
+  "authors": [
+    {
+      "name": "Vladyslav Alieksieiev",
+      "email": "vvs551551@gmail.com",
+      "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}
