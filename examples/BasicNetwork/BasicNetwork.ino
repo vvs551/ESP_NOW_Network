@@ -19,7 +19,7 @@ void recv(const uint8_t *addr, const uint8_t *data, int len) {
   esp_now_data_t *msg = (esp_now_data_t *)data;
   if (len > 0) {
     dataType *recv = (dataType *)msg->str;
-    log_i("Message: %d %d %d %d", recv->data0, recv->data1, recv->data2, recv->data3);
+    log_i("from " MACSTR " received: %d %d %d %d", MAC2STR(addr), recv->data0, recv->data1, recv->data2, recv->data3);
   }  
 }
 
