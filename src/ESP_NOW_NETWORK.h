@@ -1,26 +1,31 @@
 #pragma once
 #include "ESP32_NOW.h"
 #include "WiFi.h"
-#include <esp_mac.h>  // For the MAC2STR and MACSTR macros
+#include <esp_mac.h>            // For the MAC2STR and MACSTR macros
 
-//#define LOWPOWER    // for XIAO C3 it helps to reduce the transmit power because too much
-#define HELLO_MSG "EPII"
-#define OK_MSG    "OK"  
+#define USEEEPROM
+//#define LOWPOWER              // for XIAO C3 it helps to reduce the transmit power because the power is too much
+#define HELLO_MSG "EPII"        // Any hello message for handshaking
+#define OK_MSG    "OK"          // Any Ok message for handshaking 
 
 typedef enum {
   EPCLIENT,
   EPSERVER,
   EPBROADCAST
-} ep_role_type;
+} ep_role_type;                 // Roles of the node
 
-typedef struct {
+typedef struct {                // message pocket type
   bool ismaster;
   char str[32];
 } __attribute__((packed)) esp_now_data_t;
 
+//
+// Peer class - used by node for store peers data
+//
 class ESP_NOW_Peer_Class : public ESP_NOW_Peer {
 public:
   bool ready = false;
+  const uint8_t * mac;
   esp_now_data_t *msg;
   ESP_NOW_Peer_Class(const uint8_t *mac_addr,
                       ep_role_type prole,
@@ -37,7 +42,9 @@ private:
   const ep_role_type prole;
   const ep_role_type nrole;
 };
-
+//  ==========
+//  Node class 
+//  ==========
 class ESP_NOW_Network_Node : public ESP_NOW_Class {
 private:
   inline static const ep_role_type DEF_ROLE = EPCLIENT;
@@ -52,10 +59,10 @@ public:
   const uint8_t channel;
   const ep_role_type role;
   bool ready = false;
-
   ESP_NOW_Network_Node(const ep_role_type role = DEF_ROLE, const uint8_t channel = DEF_CHANNEL);
   ~ESP_NOW_Network_Node(void);
   void checkstate(void);
-  void onNewRecv(void (*rc)(const uint8_t *addr, const uint8_t *data, int len), void *arg);
-  void senddata(const char* data);
+  void onNewRecv(void (*rc)(const uint8_t *addr, const uint8_t position, const uint8_t *data, int len), void *arg);
+  void senddata(const char* data, int size);
+  void clearAllPeers(void);
 };
