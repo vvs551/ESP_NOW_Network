@@ -15,7 +15,7 @@ Include the library in your sketch and use the provided classes to set up an ESP
 
 ESP_NOW_Network_Node *node;
 
-void recv(const uint8_t *addr, const uint8_t *data, int len){
+void recv(const uint8_t *addr, const uint8_t pos, const uint8_t *data, int len){
   // Your code here
 }
 
