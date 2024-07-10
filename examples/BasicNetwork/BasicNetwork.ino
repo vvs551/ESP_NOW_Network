@@ -40,7 +40,7 @@ void sendData() {
   toSend.data2 = rand() / 1000000;  
   toSend.data3 = rand() / 1000000;  
   const char *d = (const char *)(&toSend);
-  node->senddata(d);
+  node->senddata(d, sizeof(toSend));
 }
 
 void loop() {
