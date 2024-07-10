@@ -15,7 +15,7 @@ typedef struct {
 dataType toSend;
 ESP_NOW_Network_Node *node;
 
-void recv(const uint8_t *addr, const uint8_t *data, int len) {
+void recv(const uint8_t *addr, uint8_t pos, const uint8_t *data, int len) {
   esp_now_data_t *msg = (esp_now_data_t *)data;
   if (len > 0) {
     dataType *recv = (dataType *)msg->str;
