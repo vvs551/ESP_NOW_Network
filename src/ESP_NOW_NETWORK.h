@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ESP_NOW_NETWORK_H
+#define ESP_NOW_NETWORK_H
 #include "ESP32_NOW.h"
 #include "WiFi.h"
 #include <esp_mac.h>            // For the MAC2STR and MACSTR macros
@@ -62,7 +63,9 @@ public:
   ESP_NOW_Network_Node(const ep_role_type role = DEF_ROLE, const uint8_t channel = DEF_CHANNEL);
   ~ESP_NOW_Network_Node(void);
   void checkstate(void);
+
   void onNewRecv(void (*rc)(const uint8_t *addr, const uint8_t position, const uint8_t *data, int len), void *arg);
   void senddata(const char* data, int size);
   void clearAllPeers(void);
 };
+#endif //ESP_NOW_NETWORK_H
