@@ -75,7 +75,8 @@ static void delete_peers(){
     log_e("Failed to initialize EEPROM");
     return;
   }    
-  EEPROM.writeByte(0,0);
+  //log_i("Delete peers from EEPROM");
+  EEPROM.writeByte(0,0xFF);
   EEPROM.commit();
 }
 #endif
@@ -145,10 +146,22 @@ void ESP_NOW_Peer_Class::onReceive(const uint8_t *data, size_t len, bool broadca
       log_d("Broadcast message to " MACSTR " %s as %s", MAC2STR(addr()), msg->str, msg->ismaster ? "server" : "client");
     }
   } else {
+	log_d("%s", msg->str); 	
     const uint8_t *macaddr = addr();
     int pos = find_peer_position(ep_peers, macaddr);
-    if (pos > -1)
-       new_recv(macaddr, pos, data, len);     
+    if (pos > -1){
+		if (strcmp(msg->str, OK_MSG) != 0){
+			// confirmation of the receiving
+			esp_now_data_t *msg_ok = new (esp_now_data_t);
+			msg_ok->ismaster = nrole == EPSERVER;
+			strcpy(msg_ok->str, OK_MSG);
+			while (!send_message((const uint8_t *)msg_ok, sizeof(esp_now_data_t)));
+			log_d("Send message to " MACSTR " %s as %s", MAC2STR(addr()), msg_ok->str, msg_ok->ismaster ? "server" : "client");
+			msg_ok = NULL;
+			delete msg_ok;
+		}		
+		new_recv(macaddr, pos, data, len);
+	}
   }
 }
 
@@ -161,11 +174,10 @@ void ESP_NOW_Peer_Class::onSent(bool success) {
   }
 }
 
-ESP_NOW_Network_Node::ESP_NOW_Network_Node(const ep_role_type role, const uint8_t channel): ESP_NOW_Class(), role(role), channel(channel) {
+ESP_NOW_Network_Node::ESP_NOW_Network_Node(const ep_role_type role, const uint8_t channel, bool lowpowermode): ESP_NOW_Class(), role(role), channel(channel), LOWTXPOWER(lowpowermode) {
   WiFi.mode(WIFI_STA);
-#ifdef  LOWPOWER
+if (LOWTXPOWER)
   WiFi.setTxPower(WIFI_POWER_7dBm);
-#endif
   WiFi.setChannel(channel);
   while (!WiFi.STA.started()) {
     delay(100);
@@ -219,6 +231,7 @@ void ESP_NOW_Network_Node::clearAllPeers(){
 #ifdef USEEEPROM
   delete_peers();
 #endif
+  ready = false;
 }
 void ESP_NOW_Network_Node::onNewRecv(void (*rc)(const uint8_t *addr, const uint8_t position, const uint8_t *data, int len), void *arg) {
   new_recv = rc;
